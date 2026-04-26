@@ -1,0 +1,64 @@
+services:
+  
+  redis:
+    image: redis:alpine
+    container_name: trading-redis
+    restart: unless-stopped
+
+  db:
+    image: postgres
+    container_name: trading-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER: ${DB_USER}
+      - POSTGRES_PASSWORD: ${DB_PASSWORD}
+      - POSTGRES_DB: ${DB_NAME}
+    depends_on:
+      - redis
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+
+  engines:
+    build: "./engines/"
+    container_name: trading-engines
+    restart: unless-stopped
+    depends_on:
+      - db
+  
+  priceFeed:
+    build: "./priceFeed/"
+    container_name: trading-price
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  market:
+    build: "./market/"
+    container_name: trading-market
+    restart: unless-stopped
+    depends_on:
+      - priceFeed
+  
+  money:
+    build: "./money/"
+    container_name: trading-money
+    restart: unless-stopped
+    depends_on:
+      - db
+  
+  api:
+    build: "./api/"
+    container_name: trading-api
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "3005:3000"
+  
+  cli:
+    build: "./cli/"
+    container_name: trading-cli
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redis
