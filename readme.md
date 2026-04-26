@@ -1,6 +1,6 @@
 # Trading system
 
-## description
+## Description
 
 This distributed system allows to users a RT tracking and trading for shares.
 

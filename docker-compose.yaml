@@ -10,9 +10,9 @@ services:
     container_name: trading-db
     restart: unless-stopped
     environment:
-      - POSTGRES_USER: ${DB_USER}
-      - POSTGRES_PASSWORD: ${DB_PASSWORD}
-      - POSTGRES_DB: ${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     depends_on:
       - redis
     volumes:
@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
   
-  priceFeed:
+  pricefeed:
     build: "./priceFeed/"
     container_name: trading-price
     restart: unless-stopped
@@ -37,7 +37,7 @@ services:
     container_name: trading-market
     restart: unless-stopped
     depends_on:
-      - priceFeed
+      - pricefeed
   
   money:
     build: "./money/"
